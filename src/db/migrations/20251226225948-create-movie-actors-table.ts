@@ -2,6 +2,12 @@ import { QueryInterface, DataTypes } from "sequelize";
 
 export async function up(queryInterface: QueryInterface): Promise<void> {
   await queryInterface.createTable("movie_actors", {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false,
+    },
     movie_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
