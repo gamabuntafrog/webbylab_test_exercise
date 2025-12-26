@@ -16,12 +16,8 @@ export interface LoginData {
 }
 
 export interface AuthResult {
-  accessToken: string;
-  refreshToken: string;
-  user: {
-    id: string;
-    email: string;
-  };
+  token: string;
+  status: number;
 }
 
 class AuthService {
@@ -42,12 +38,8 @@ class AuthService {
     });
 
     return {
-      accessToken,
-      refreshToken,
-      user: {
-        id: userId,
-        email: user.email,
-      },
+      token: accessToken,
+      status: 1,
     };
   }
 
@@ -96,6 +88,7 @@ class AuthService {
       data.password,
       user.password
     );
+
     if (!isPasswordValid) {
       throw new UnauthorizedError(
         "Invalid email or password",

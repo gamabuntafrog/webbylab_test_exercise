@@ -22,11 +22,7 @@ class AuthController {
       const registerData = mapper.toDTO(req, registerSchema);
       const result = await this.authService.register(registerData);
 
-      res.status(201).json({
-        success: true,
-        message: "User registered successfully",
-        data: result,
-      });
+      res.status(201).json(result);
     } catch (error) {
       next(error);
     }
@@ -44,11 +40,7 @@ class AuthController {
       const loginData = mapper.toDTO(req, loginSchema);
       const result = await this.authService.login(loginData);
 
-      res.status(200).json({
-        success: true,
-        message: "Login successful",
-        data: result,
-      });
+      res.status(200).json(result);
     } catch (error) {
       next(error);
     }
@@ -66,11 +58,7 @@ class AuthController {
       const { refreshToken } = mapper.toDTO(req, refreshSchema);
       const result = await this.authService.refreshTokens(refreshToken);
 
-      res.status(200).json({
-        success: true,
-        message: "Token refreshed successfully",
-        data: result,
-      });
+      res.status(200).json(result);
     } catch (error) {
       next(error);
     }

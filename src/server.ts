@@ -8,12 +8,12 @@ import AuthService from "@services/authService";
 import UserService from "@services/userService";
 import AuthController from "@controllers/authController";
 import UserController from "@controllers/userController";
-import createAuthRoutes from "@routes/authRoutes";
 import createUserRoutes from "@routes/userRoutes";
 import { errorHandler } from "@middleware/global/errorHandler";
 import { corsMiddleware } from "@middleware/global/corsMiddleware";
 import { requestLogger } from "@middleware/global/requestLogger";
 import { ERROR_CODES } from "@constants/errorCodes";
+import createSessionRoutes from "@routes/sessionRouter";
 
 const app: Application = express();
 
@@ -38,12 +38,12 @@ const authController = new AuthController(authService);
 const userController = new UserController(userService);
 
 // Initialize routes with controllers
-const authRoutes = createAuthRoutes(authController);
-const userRoutes = createUserRoutes(userController);
+const sessionRoutes = createSessionRoutes(authController);
+const userRoutes = createUserRoutes(userController, authController);
 
 // Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
+app.use("/api/v1/sessions", sessionRoutes);
+app.use("/api/v1/users", userRoutes);
 
 // Health check route
 app.get("/health", function (req: Request, res: Response) {
