@@ -13,7 +13,7 @@ export class User extends Model<
   InferAttributes<User>,
   InferCreationAttributes<User>
 > {
-  declare id: CreationOptional<string>;
+  declare id: CreationOptional<number>;
   declare email: string;
   declare password: string;
   declare refreshTokenHash: CreationOptional<string | null>;
@@ -26,9 +26,9 @@ export function initializeUserModel(sequelize: Sequelize): ModelStatic<User> {
     "User",
     {
       id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
+        type: DataTypes.INTEGER,
         primaryKey: true,
+        autoIncrement: true,
       },
       email: {
         type: DataTypes.STRING(255),

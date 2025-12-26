@@ -1,6 +1,6 @@
 # Backend Template
 
-This is a GitHub template repository for creating production-ready Express.js backends with TypeScript and PostgreSQL (via Sequelize).
+This is a GitHub template repository for creating production-ready Express.js backends with TypeScript and SQLite (via Sequelize).
 
 ## 🚀 Quick Start
 
@@ -32,7 +32,7 @@ nvm use
 
 ### Core Features
 - ✅ Express.js with TypeScript
-- ✅ PostgreSQL database powered by Sequelize ORM
+- ✅ SQLite database powered by Sequelize ORM
 - ✅ JWT-based authentication (access + refresh tokens)
 - ✅ Password hashing with bcryptjs
 - ✅ Request validation with Zod
@@ -76,8 +76,7 @@ Copy `.env.example` to `.env` and configure:
 
 - `PORT`: Server port (default: 3000)
 - `NODE_ENV`: Environment (development/production)
-- `DATABASE_URL`: PostgreSQL connection string (or set `POSTGRES_*` vars)
-- `POSTGRES_SSL`: Enable SSL for PostgreSQL connections (`true`/`false`)
+- `DATABASE_PATH`: SQLite database file path (default: `./database.sqlite`)
 - `JWT_SECRET`: Secret key for JWT tokens
 - `ACCESS_TOKEN_EXPIRES_IN`: Access token expiration (default: 1h)
 - `REFRESH_TOKEN_EXPIRES_IN`: Refresh token expiration (default: 7d)
@@ -143,7 +142,7 @@ This template is provided as-is. Update the license in `package.json` to match y
 Built with:
 - Express.js
 - TypeScript
-- PostgreSQL + Sequelize
+- SQLite + Sequelize
 - Zod
 - JWT
 - Pino

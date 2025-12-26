@@ -3,31 +3,23 @@ import config from "@config";
 import logger from "@utilities/logger";
 
 const baseOptions: Options = {
-  dialect: "postgres",
+  dialect: "sqlite",
+  storage: config.DATABASE_PATH,
   logging: config.isDevelopment()
     ? (query) => logger.debug({ query }, "sequelize.query")
     : false,
 };
 
-if (config.POSTGRES_SSL) {
-  baseOptions.dialectOptions = {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
-    },
-  };
-}
-
 async function connectDB(): Promise<Sequelize> {
-  const sequelize = new Sequelize(config.DATABASE_URL, baseOptions);
+  const sequelize = new Sequelize(baseOptions);
 
   try {
     await sequelize.authenticate();
-    logger.info("PostgreSQL connected successfully");
+    logger.info("SQLite connected successfully");
 
     return sequelize;
   } catch (error) {
-    logger.error({ error }, "PostgreSQL connection error");
+    logger.error({ error }, "SQLite connection error");
     process.exit(1);
   }
 }

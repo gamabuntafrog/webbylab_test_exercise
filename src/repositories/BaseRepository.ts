@@ -13,7 +13,7 @@ type TransactionOptions = {
 
 export abstract class BaseRepository<
   TModel extends Model<
-    InferAttributes<TModel> & { id: string },
+    InferAttributes<TModel> & { id: string | number },
     InferCreationAttributes<TModel>
   >,
   TCreateInput,
@@ -48,7 +48,7 @@ export abstract class BaseRepository<
   /**
    * Find a record by its primary key (id)
    */
-  public async findById(id: string): Promise<TModel | null> {
+  public async findById(id: string | number): Promise<TModel | null> {
     return await this.model.findByPk(id);
   }
 
@@ -74,7 +74,7 @@ export abstract class BaseRepository<
    * Update a record by its primary key (id)
    */
   public async updateById(
-    id: string,
+    id: string | number,
     data: TUpdateInput,
     options: TransactionOptions = {}
   ): Promise<TModel | null> {
@@ -97,7 +97,7 @@ export abstract class BaseRepository<
   /**
    * Delete a record by its primary key (id)
    */
-  public async deleteById(id: string): Promise<boolean> {
+  public async deleteById(id: string | number): Promise<boolean> {
     const deletedCount = await this.model.destroy({
       where: { id },
     } as unknown as Parameters<ModelStatic<TModel>["destroy"]>[0]);

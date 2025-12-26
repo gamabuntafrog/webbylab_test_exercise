@@ -42,9 +42,9 @@ export async function up(queryInterface: QueryInterface): Promise<void> {
   // Example:
   // await queryInterface.createTable("table_name", {
   //   id: {
-  //     type: DataTypes.UUID,
-  //     defaultValue: DataTypes.UUIDV4,
+  //     type: DataTypes.INTEGER,
   //     primaryKey: true,
+  //     autoIncrement: true,
   //     allowNull: false,
   //   },
   //   created_at: {

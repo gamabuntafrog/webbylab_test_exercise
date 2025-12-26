@@ -1,13 +1,13 @@
 # Backend Template
 
-> 🚀 A production-ready Express.js backend template with TypeScript, PostgreSQL (Sequelize), authentication, and best practices.
+> 🚀 A production-ready Express.js backend template with TypeScript, SQLite (Sequelize), authentication, and best practices.
 
 This is a GitHub template repository. Click "Use this template" to create a new repository from this template.
 
 ## 📋 What's Included
 
 - ✅ Express.js with TypeScript
-- ✅ PostgreSQL with Sequelize ORM
+- ✅ SQLite with Sequelize ORM
 - ✅ JWT-based authentication (access + refresh tokens)
 - ✅ Password hashing with bcryptjs
 - ✅ Request validation with Zod
@@ -53,7 +53,7 @@ nvm use
    ```bash
    cp .env.example .env
    ```
-   Then edit `.env` with your configuration (PostgreSQL `DATABASE_URL`, JWT secrets, etc.)
+   Then edit `.env` with your configuration (SQLite `DATABASE_PATH`, JWT secrets, etc.)
 5. **Start developing**:
    ```bash
    npm run dev
@@ -83,7 +83,7 @@ npm install
 cp .env.example .env
 ```
 
-2. Update `.env` with your PostgreSQL connection string (`DATABASE_URL`) and JWT secrets.
+2. Update `.env` with your SQLite database path (`DATABASE_PATH`) and JWT secrets.
    - You can also configure `ACCESS_TOKEN_EXPIRES_IN`, `REFRESH_TOKEN_EXPIRES_IN`, and `REFRESH_TOKEN_SECRET` for more granular control over token lifetimes.
 
 ## Running the Server
@@ -216,7 +216,7 @@ Commit messages are automatically validated when you commit. If your commit mess
 
 - **Express.js** - Web framework
 - **TypeScript** - Type-safe JavaScript
-- **PostgreSQL + Sequelize** - Relational database + ORM
+- **SQLite + Sequelize** - Relational database + ORM
 - **Zod** - Schema validation
 - **JWT** - Authentication tokens
 - **bcryptjs** - Password hashing

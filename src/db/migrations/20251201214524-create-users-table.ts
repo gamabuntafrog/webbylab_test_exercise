@@ -3,9 +3,9 @@ import { QueryInterface, DataTypes } from "sequelize";
 export async function up(queryInterface: QueryInterface): Promise<void> {
   await queryInterface.createTable("users", {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: DataTypes.INTEGER,
       primaryKey: true,
+      autoIncrement: true,
       allowNull: false,
     },
     email: {

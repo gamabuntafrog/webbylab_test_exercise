@@ -9,8 +9,7 @@ class Config {
   public readonly NODE_ENV: string;
 
   // Database configuration
-  public readonly DATABASE_URL: string;
-  public readonly POSTGRES_SSL: boolean;
+  public readonly DATABASE_PATH: string;
 
   // JWT configuration
   public readonly JWT_SECRET: string;
@@ -31,11 +30,8 @@ class Config {
     this.PORT = parseInt(process.env.PORT || "3000", 10);
     this.NODE_ENV = process.env.NODE_ENV || "development";
 
-    // Database (PostgreSQL + Sequelize)
-    this.DATABASE_URL =
-      process.env.DATABASE_URL || this.buildDefaultDatabaseUrl();
-    this.POSTGRES_SSL =
-      (process.env.POSTGRES_SSL || "false").toLowerCase() === "true";
+    // Database (SQLite + Sequelize)
+    this.DATABASE_PATH = process.env.DATABASE_PATH || "./database.sqlite";
 
     // JWT
     this.JWT_SECRET =
@@ -90,21 +86,6 @@ class Config {
         `Missing required environment variables: ${required.join(", ")}`
       );
     }
-  }
-
-  /**
-   * Build a default PostgreSQL connection string using individual env vars
-   */
-  private buildDefaultDatabaseUrl(): string {
-    const user = process.env.POSTGRES_USER || "postgres";
-    const password = process.env.POSTGRES_PASSWORD || "postgres";
-    const host = process.env.POSTGRES_HOST || "localhost";
-    const port = process.env.POSTGRES_PORT || "5432";
-    const database = process.env.POSTGRES_DB || "palz";
-
-    return `postgres://${encodeURIComponent(user)}:${encodeURIComponent(
-      password
-    )}@${host}:${port}/${database}`;
   }
 
   /**

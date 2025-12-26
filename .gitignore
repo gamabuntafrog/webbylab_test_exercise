@@ -4,3 +4,8 @@ dist/
 *.log
 .DS_Store
 
+# SQLite database files
+*.sqlite
+*.sqlite3
+*.db
+
