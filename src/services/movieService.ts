@@ -1,7 +1,12 @@
 import MovieRepository from "@repositories/MovieRepository";
 import ActorRepository from "@repositories/ActorRepository";
 import MovieActorRepository from "@repositories/MovieActorRepository";
-import { Movie, MovieFormat, CreateMovieInput } from "@db/models/Movie";
+import {
+  Movie,
+  MovieFormat,
+  CreateMovieInput,
+  UpdateMovieInput,
+} from "@db/models/Movie";
 import { withTransaction } from "@db/utilities/transaction";
 import { NotFoundError } from "@errors/AppError";
 import { ERROR_CODES } from "@constants/errorCodes";
@@ -121,6 +126,51 @@ class MovieService {
 
     // Return movie with actors using the new method
     return this.toResponse(movie);
+  }
+
+  /**
+   * Update a movie by ID
+   */
+  public async updateMovie(
+    id: number,
+    data: UpdateMovieInput
+  ): Promise<MovieResponse> {
+    const movie = await this.movieRepository.findById(id);
+
+    if (!movie) {
+      throw new NotFoundError(
+        `Movie with id ${id} not found`,
+        ERROR_CODES.MOVIE_NOT_FOUND
+      );
+    }
+
+    // Prepare update data (trim title if provided)
+    const updateData: UpdateMovieInput = {};
+
+    if (data.title !== undefined) {
+      updateData.title = data.title.trim();
+    }
+
+    if (data.year !== undefined) {
+      updateData.year = data.year;
+    }
+
+    if (data.format !== undefined) {
+      updateData.format = data.format;
+    }
+
+    // Update the movie
+    const updatedMovie = await this.movieRepository.updateById(id, updateData);
+
+    if (!updatedMovie) {
+      throw new NotFoundError(
+        `Movie with id ${id} not found`,
+        ERROR_CODES.MOVIE_NOT_FOUND
+      );
+    }
+
+    // Return updated movie with actors
+    return await this.getMovieByIdWithActors(id);
   }
 
   /**

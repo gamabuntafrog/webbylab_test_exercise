@@ -4,6 +4,8 @@ import mapper from "@mappers/mapper";
 import {
   createMovieSchema,
   deleteMovieByIdSchema,
+  updateMovieSchema,
+  getMovieByIdSchema,
 } from "@validators/movieValidator";
 
 class MovieController {
@@ -22,6 +24,27 @@ class MovieController {
       const result = await this.movieService.createMovie(movieData);
 
       res.status(201).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Update a movie by ID
+   */
+  public async updateMovie(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { id } = mapper.toDTO(req, getMovieByIdSchema);
+
+      const updateData = mapper.toDTO(req, updateMovieSchema);
+
+      const result = await this.movieService.updateMovie(id, updateData);
+
+      res.status(200).json(result);
     } catch (error) {
       next(error);
     }

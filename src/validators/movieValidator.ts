@@ -53,3 +53,34 @@ export const getMovieByIdSchema = z.object({
 export const deleteMovieByIdSchema = z.object({
   id: movieIdSchema,
 });
+
+// Schema for updating a movie by ID (PATCH)
+export const updateMovieSchema = z
+  .object({
+    title: z
+      .string({
+        invalid_type_error: "Title must be a string",
+      })
+      .min(1, "Title cannot be empty")
+      .max(255, "Title must be at most 255 characters")
+      .optional(),
+    year: z
+      .number({
+        invalid_type_error: "Year must be a number",
+      })
+      .int("Year must be an integer")
+      .min(1888, "Year must be at least 1888")
+      .max(
+        new Date().getFullYear() + 10,
+        "Year cannot be too far in the future"
+      )
+      .optional(),
+    format: z
+      .nativeEnum(MovieFormat, {
+        invalid_type_error: `Format must be one of: ${Object.values(MovieFormat).join(", ")}`,
+      })
+      .optional(),
+  })
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "At least one field (title, year, or format) must be provided",
+  });
