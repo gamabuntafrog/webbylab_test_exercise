@@ -9,5 +9,8 @@ export default function createMovieRoutes(
   // Create a new movie
   router.post("/", movieController.createMovie.bind(movieController));
 
+  // Delete a movie by ID
+  router.delete("/:id", movieController.deleteMovie.bind(movieController));
+
   return router;
 }

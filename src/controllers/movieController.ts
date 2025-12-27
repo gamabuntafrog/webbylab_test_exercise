@@ -1,7 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import MovieService from "@services/movieService";
 import mapper from "@mappers/mapper";
-import { createMovieSchema } from "@validators/movieValidator";
+import {
+  createMovieSchema,
+  deleteMovieByIdSchema,
+} from "@validators/movieValidator";
 
 class MovieController {
   constructor(private readonly movieService: MovieService) {}
@@ -19,6 +22,24 @@ class MovieController {
       const result = await this.movieService.createMovie(movieData);
 
       res.status(201).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Delete a movie by ID
+   */
+  public async deleteMovie(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { id } = mapper.toDTO(req, deleteMovieByIdSchema);
+      await this.movieService.deleteMovie(id);
+
+      res.status(204).send();
     } catch (error) {
       next(error);
     }

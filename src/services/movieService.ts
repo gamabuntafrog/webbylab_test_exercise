@@ -122,6 +122,15 @@ class MovieService {
     // Return movie with actors using the new method
     return this.toResponse(movie);
   }
+
+  /**
+   * Delete a movie by ID
+   * CASCADE will automatically delete related records from movie_actors table
+   * Returns 204 regardless of whether the movie existed (idempotent operation)
+   */
+  public async deleteMovie(id: number): Promise<void> {
+    await this.movieRepository.deleteById(id);
+  }
 }
 
 export default MovieService;

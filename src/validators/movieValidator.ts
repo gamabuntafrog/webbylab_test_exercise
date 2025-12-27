@@ -34,3 +34,22 @@ export const createMovieSchema = z.object({
     )
     .min(1, "At least one actor is required"),
 });
+
+// Base schema for movie ID validation
+const movieIdSchema = z.coerce
+  .number({
+    required_error: "Movie ID is required",
+    invalid_type_error: "Movie ID must be a number",
+  })
+  .int("Movie ID must be an integer")
+  .positive("Movie ID must be positive");
+
+// Schema for getting a movie by ID
+export const getMovieByIdSchema = z.object({
+  id: movieIdSchema,
+});
+
+// Schema for deleting a movie by ID
+export const deleteMovieByIdSchema = z.object({
+  id: movieIdSchema,
+});
