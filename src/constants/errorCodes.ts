@@ -9,6 +9,7 @@ export const ERROR_CODES = {
 
   // User errors
   USER_ALREADY_EXISTS: "USER_ALREADY_EXISTS",
+  EMAIL_NOT_UNIQUE: "EMAIL_NOT_UNIQUE",
   USER_NOT_FOUND: "USER_NOT_FOUND",
 
   // Movie errors

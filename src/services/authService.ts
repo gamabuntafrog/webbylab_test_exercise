@@ -53,7 +53,8 @@ class AuthService {
     if (existingUser) {
       throw new ConflictError(
         "User with this email already exists",
-        ERROR_CODES.USER_ALREADY_EXISTS
+        ERROR_CODES.EMAIL_NOT_UNIQUE,
+        { email: "NOT_UNIQUE" }
       );
     }
 

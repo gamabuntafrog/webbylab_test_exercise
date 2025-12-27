@@ -27,13 +27,37 @@ class Mapper {
     });
 
     if (!result.success) {
+      // Build field-specific error details to follow the contract
+      const fields: Record<string, string> = {};
+      result.error.errors.forEach((error) => {
+        const path = error.path.join(".");
+        // Map Zod error codes to field error codes
+        let fieldErrorCode = "INVALID";
+        if (error.code === "invalid_type") {
+          fieldErrorCode = "INVALID_TYPE";
+        } else if (error.code === "too_small") {
+          fieldErrorCode = "TOO_SMALL";
+        } else if (error.code === "too_big") {
+          fieldErrorCode = "TOO_BIG";
+        } else if (error.code === "invalid_string") {
+          fieldErrorCode = "INVALID_FORMAT";
+        } else if (error.code === "invalid_enum_value") {
+          fieldErrorCode = "INVALID_VALUE";
+        } else if (error.code === "custom") {
+          fieldErrorCode = "INVALID";
+        }
+
+        fields[path] = fieldErrorCode;
+      });
+
       // Get message from first error issue
       const firstErrorMessage =
         result.error.errors[0]?.message || "Validation failed";
 
       throw new ValidationError(
         firstErrorMessage,
-        ERROR_CODES.VALIDATION_ERROR
+        ERROR_CODES.VALIDATION_ERROR,
+        fields
       );
     }
 

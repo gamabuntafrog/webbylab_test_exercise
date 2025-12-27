@@ -48,14 +48,14 @@ export function errorHandler(
   // Handle AppError instances
   if (err instanceof AppError) {
     const errorResponse = {
-      success: false,
+      status: 0,
       error: {
         code: err.code,
-        message: err.message,
-        ...(err.details && { details: err.details }),
+        ...(err.details && { fields: err.details }),
       },
       ...(config.isDevelopment() && {
         meta: {
+          message: err.message,
           timestamp: err.timestamp.toISOString(),
           path: req.url,
           method: req.method,
@@ -69,10 +69,9 @@ export function errorHandler(
 
   // Handle unexpected errors
   const errorResponse = {
-    success: false,
+    status: 0,
     error: {
       code: ERROR_CODES.INTERNAL_SERVER_ERROR,
-      message: "An unexpected error occurred",
     },
     ...(config.isDevelopment() && {
       meta: {
