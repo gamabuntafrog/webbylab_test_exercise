@@ -30,6 +30,24 @@ class MovieController {
   }
 
   /**
+   * Get a movie by ID
+   */
+  public async getMovieById(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { id } = mapper.toDTO(req, getMovieByIdSchema);
+      const result = await this.movieService.getMovieByIdWithActors(id);
+
+      res.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
    * Update a movie by ID
    */
   public async updateMovie(

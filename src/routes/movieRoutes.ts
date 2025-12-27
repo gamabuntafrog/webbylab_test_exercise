@@ -9,6 +9,9 @@ export default function createMovieRoutes(
   // Create a new movie
   router.post("/", movieController.createMovie.bind(movieController));
 
+  // Get a movie by ID
+  router.get("/:id", movieController.getMovieById.bind(movieController));
+
   // Update a movie by ID
   router.patch("/:id", movieController.updateMovie.bind(movieController));
 
