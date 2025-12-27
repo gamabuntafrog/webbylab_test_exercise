@@ -8,7 +8,7 @@ export default function createUserRoutes(
 ): Router {
   const router = Router();
 
-  router.post("/create", authController.register.bind(authController));
+  router.post("/", authController.register.bind(authController));
 
   return router;
 }
