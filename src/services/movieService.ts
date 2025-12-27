@@ -18,6 +18,13 @@ export interface CreateMovieData {
   actors: string[];
 }
 
+export interface UpdateMovieData {
+  title?: string;
+  year?: number;
+  format?: MovieFormat;
+  actors?: string[];
+}
+
 export interface MovieResponse {
   id: number;
   title: string;
@@ -130,10 +137,11 @@ class MovieService {
 
   /**
    * Update a movie by ID
+   * Updates title, year, format fields and/or actors
    */
   public async updateMovie(
     id: number,
-    data: UpdateMovieInput
+    data: UpdateMovieData
   ): Promise<MovieResponse> {
     const movie = await this.movieRepository.findById(id);
 
@@ -144,7 +152,7 @@ class MovieService {
       );
     }
 
-    // Prepare update data (trim title if provided)
+    // Prepare update data for movie fields
     const updateData: UpdateMovieInput = {};
 
     if (data.title !== undefined) {
@@ -159,15 +167,24 @@ class MovieService {
       updateData.format = data.format;
     }
 
-    // Update the movie
-    const updatedMovie = await this.movieRepository.updateById(id, updateData);
+    await withTransaction(async (transaction) => {
+      await this.movieRepository.updateById(id, updateData, { transaction });
 
-    if (!updatedMovie) {
-      throw new NotFoundError(
-        `Movie with id ${id} not found`,
-        ERROR_CODES.MOVIE_NOT_FOUND
-      );
-    }
+      if (data.actors !== undefined) {
+        const actors = await this.actorRepository.findOrCreateByNames(
+          data.actors,
+          transaction
+        );
+
+        const actorIds = actors.map((actor) => actor.id);
+
+        await this.movieActorRepository.replaceActorsForMovie(
+          id,
+          actorIds,
+          transaction
+        );
+      }
+    });
 
     // Return updated movie with actors
     return await this.getMovieByIdWithActors(id);

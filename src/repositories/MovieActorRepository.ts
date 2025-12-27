@@ -40,6 +40,45 @@ class MovieActorRepository extends BaseRepository<
   }
 
   /**
+   * Remove actors from a movie
+   */
+  public async removeActorsFromMovie(
+    movieId: number,
+    actorIds: number[],
+    transaction?: Transaction
+  ): Promise<void> {
+    if (actorIds.length === 0) {
+      return;
+    }
+
+    await this.model.destroy({
+      where: {
+        movieId,
+        actorId: actorIds,
+      },
+      transaction,
+    });
+  }
+
+  /**
+   * Replace all actors for a movie (remove all existing and add new ones)
+   */
+  public async replaceActorsForMovie(
+    movieId: number,
+    actorIds: number[],
+    transaction?: Transaction
+  ): Promise<void> {
+    // Remove all existing actors for this movie
+    await this.model.destroy({
+      where: { movieId },
+      transaction,
+    });
+
+    // Add new actors
+    await this.addActorsToMovie(movieId, actorIds, transaction);
+  }
+
+  /**
    * Get actor IDs for a movie
    */
   public async getActorIdsByMovieId(movieId: number): Promise<number[]> {

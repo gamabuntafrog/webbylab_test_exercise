@@ -80,7 +80,18 @@ export const updateMovieSchema = z
         invalid_type_error: `Format must be one of: ${Object.values(MovieFormat).join(", ")}`,
       })
       .optional(),
+    actors: z
+      .array(
+        z
+          .string({
+            invalid_type_error: "Actor name must be a string",
+          })
+          .min(1, "Actor name cannot be empty")
+          .max(255, "Actor name must be at most 255 characters")
+      )
+      .optional(),
   })
   .refine((data) => Object.keys(data).length > 0, {
-    message: "At least one field (title, year, or format) must be provided",
+    message:
+      "At least one field (title, year, format, or actors) must be provided",
   });
