@@ -61,9 +61,9 @@ class MovieService {
   }
 
   /**
-   * Get a movie by ID with actors
+   * Private method to get movie with actors (internal use)
    */
-  public async getMovieByIdWithActors(id: number): Promise<MovieResponse> {
+  private async _getMovieByIdWithActors(id: number): Promise<MovieResponse> {
     // Get movie
     const movie = await this.movieRepository.findById(id);
     if (!movie) {
@@ -88,6 +88,13 @@ class MovieService {
     } as Movie;
 
     return this.toResponse(movieWithActors);
+  }
+
+  /**
+   * Get a movie by ID with actors (public API)
+   */
+  public async getMovieByIdWithActors(id: number): Promise<MovieResponse> {
+    return await this._getMovieByIdWithActors(id);
   }
 
   /**
@@ -187,7 +194,7 @@ class MovieService {
     });
 
     // Return updated movie with actors
-    return await this.getMovieByIdWithActors(id);
+    return await this._getMovieByIdWithActors(id);
   }
 
   /**
