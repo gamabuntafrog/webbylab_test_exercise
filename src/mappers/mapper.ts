@@ -44,7 +44,15 @@ class Mapper {
         } else if (error.code === "invalid_enum_value") {
           fieldErrorCode = "INVALID_VALUE";
         } else if (error.code === "custom") {
-          fieldErrorCode = "INVALID";
+          // Check for password mismatch specifically
+          if (
+            error.message?.toLowerCase().includes("password") &&
+            error.message?.toLowerCase().includes("match")
+          ) {
+            fieldErrorCode = "MISMATCH";
+          } else {
+            fieldErrorCode = "INVALID";
+          }
         }
 
         fields[path] = fieldErrorCode;

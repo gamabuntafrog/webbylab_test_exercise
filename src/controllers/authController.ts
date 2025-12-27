@@ -20,6 +20,7 @@ class AuthController {
   ): Promise<void> {
     try {
       const registerData = mapper.toDTO(req, registerSchema);
+
       const result = await this.authService.register(registerData);
 
       res.status(201).json(result);
