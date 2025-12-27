@@ -62,10 +62,11 @@ class MovieService {
 
   /**
    * Private method to get movie with actors (internal use)
+   * Uses JOIN operation for better performance
    */
   private async _getMovieByIdWithActors(id: number): Promise<MovieResponse> {
-    // Get movie
-    const movie = await this.movieRepository.findById(id);
+    // Get movie with actors using JOIN
+    const movie = await this.movieRepository.findByIdWithActors(id);
     if (!movie) {
       throw new NotFoundError(
         `Movie with id ${id} not found`,
@@ -73,21 +74,7 @@ class MovieService {
       );
     }
 
-    // Get actor IDs for this movie
-    const actorIds = await this.movieActorRepository.getActorIdsByMovieId(
-      movie.id
-    );
-
-    // Get actors by IDs
-    const actors = await this.actorRepository.findByIds(actorIds);
-
-    // Combine movie with actors
-    const movieWithActors = {
-      ...movie.toJSON(),
-      actors,
-    } as Movie;
-
-    return this.toResponse(movieWithActors);
+    return this.toResponse(movie);
   }
 
   /**
