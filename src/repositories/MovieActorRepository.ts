@@ -5,14 +5,15 @@ import {
 } from "@db/models/MovieActor";
 import { BaseRepository } from "./BaseRepository";
 import { Transaction } from "sequelize";
+import { Models } from "@db/associations";
 
 class MovieActorRepository extends BaseRepository<
   MovieActor,
   CreateMovieActorInput,
   never // No update operations for junction table
 > {
-  constructor(movieActorModel: MovieActorModelStatic) {
-    super(movieActorModel);
+  constructor(movieActorModel: MovieActorModelStatic, models: Models) {
+    super(movieActorModel, models);
   }
 
   /**

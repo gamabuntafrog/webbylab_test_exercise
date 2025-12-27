@@ -6,6 +6,7 @@ import {
   InferCreationAttributes,
   InferAttributes,
 } from "sequelize";
+import { Models } from "@db/associations";
 
 type TransactionOptions = {
   transaction?: Transaction;
@@ -19,7 +20,18 @@ export abstract class BaseRepository<
   TCreateInput,
   TUpdateInput,
 > {
-  constructor(protected readonly model: ModelStatic<TModel>) {}
+  constructor(
+    protected readonly model: ModelStatic<TModel>,
+    protected readonly models: Models
+  ) {}
+
+  /**
+   * Get a model from the registry by key (type-safe, no runtime checks needed)
+   * TypeScript guarantees the model exists since registry is required
+   */
+  protected getModel<K extends keyof Models>(key: K): Models[K] {
+    return this.models[key];
+  }
 
   /**
    * Find multiple records matching the given options

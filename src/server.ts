@@ -21,7 +21,7 @@ import { corsMiddleware } from "@middleware/global/corsMiddleware";
 import { requestLogger } from "@middleware/global/requestLogger";
 import { ERROR_CODES } from "@constants/errorCodes";
 import createSessionRoutes from "@routes/sessionRouter";
-import { AssociationRegistry } from "@db/associations";
+import { AssociationRegistry, Models } from "@db/associations";
 import { initializeMovieActorModel } from "@db/models/MovieActor";
 import MovieActorRepository from "@repositories/MovieActorRepository";
 
@@ -39,21 +39,26 @@ const MovieModel = initializeMovieModel(sequelize);
 const ActorModel = initializeActorModel(sequelize);
 const MovieActorModel = initializeMovieActorModel(sequelize);
 
-// Register model associations
-const associationRegistry = new AssociationRegistry({
+// Create models registry
+const modelsRegistry: Models = {
   User: UserModel,
   Movie: MovieModel,
   Actor: ActorModel,
   MovieActor: MovieActorModel,
-});
+};
 
+// Register model associations
+const associationRegistry = new AssociationRegistry(modelsRegistry);
 associationRegistry.register();
 
-// Initialize repositories with injected models
-const userRepository = new UserRepository(UserModel);
-const actorRepository = new ActorRepository(ActorModel);
-const movieRepository = new MovieRepository(MovieModel);
-const movieActorRepository = new MovieActorRepository(MovieActorModel);
+// Initialize repositories with injected models and registry
+const userRepository = new UserRepository(UserModel, modelsRegistry);
+const actorRepository = new ActorRepository(ActorModel, modelsRegistry);
+const movieRepository = new MovieRepository(MovieModel, modelsRegistry);
+const movieActorRepository = new MovieActorRepository(
+  MovieActorModel,
+  modelsRegistry
+);
 
 // Initialize services with repositories
 const authService = new AuthService(userRepository);

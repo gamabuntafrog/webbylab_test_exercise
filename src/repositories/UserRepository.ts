@@ -5,14 +5,15 @@ import {
   UpdateUserInput,
 } from "@db/models/User";
 import { BaseRepository } from "./BaseRepository";
+import { Models } from "@db/associations";
 
 class UserRepository extends BaseRepository<
   User,
   CreateUserInput,
   UpdateUserInput
 > {
-  constructor(userModel: UserModelStatic) {
-    super(userModel);
+  constructor(userModel: UserModelStatic, models: Models) {
+    super(userModel, models);
   }
 
   /**

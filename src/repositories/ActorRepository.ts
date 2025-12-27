@@ -6,14 +6,15 @@ import {
 } from "@db/models/Actor";
 import { BaseRepository } from "./BaseRepository";
 import { Transaction } from "sequelize";
+import { Models } from "@db/associations";
 
 class ActorRepository extends BaseRepository<
   Actor,
   CreateActorInput,
   UpdateActorInput
 > {
-  constructor(actorModel: ActorModelStatic) {
-    super(actorModel);
+  constructor(actorModel: ActorModelStatic, models: Models) {
+    super(actorModel, models);
   }
 
   /**
