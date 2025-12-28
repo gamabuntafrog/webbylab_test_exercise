@@ -27,7 +27,7 @@ class Config {
 
   private constructor() {
     // Server
-    this.PORT = parseInt(process.env.PORT || "3000", 10);
+    this.PORT = parseInt(process.env.APP_PORT || "3000", 10);
     this.NODE_ENV = process.env.NODE_ENV || "development";
 
     // Database (SQLite + Sequelize)
