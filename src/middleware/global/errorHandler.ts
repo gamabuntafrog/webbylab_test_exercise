@@ -49,7 +49,7 @@ export function errorHandler(
         break;
       case "LIMIT_UNEXPECTED_FILE":
         errorCode = ERROR_CODES.INVALID_FILE_FIELD;
-        message = `Unexpected file field. Expected field name: "file"`;
+        message = "Unexpected file field";
         break;
       default:
         message = err.message || "File upload error";
