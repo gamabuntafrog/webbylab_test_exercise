@@ -1,5 +1,5 @@
 {
-  "name": "backend-template",
+  "name": "movies",
   "version": "1.0.0",
   "description": "A production-ready Express.js backend template with TypeScript, SQLite (Sequelize), authentication, and best practices",
   "type": "module",

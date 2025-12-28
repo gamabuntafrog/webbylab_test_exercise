@@ -1,8 +1,198 @@
-# Backend Template
+# Movies
 
-> 🚀 A production-ready Express.js backend template with TypeScript, SQLite (Sequelize), authentication, and best practices.
 
-This is a GitHub template repository. Click "Use this template" to create a new repository from this template.
+
+## 🚀 Запуск програми та збірка Docker образу
+
+### Вимоги
+
+- **Node.js 22.x** або вище
+- **npm 10.x** або вище
+- **Docker** (для збірки Docker образу)
+
+### Конфігурація через змінні оточення
+
+Вся конфігурація програми відбувається через змінні оточення. Створіть файл `.env` в корені проєкту з наступними змінними:
+
+```bash
+# Server Configuration
+APP_PORT=3000
+NODE_ENV=development
+
+# Database Configuration
+DATABASE_PATH=./database.sqlite
+
+# JWT Configuration
+JWT_SECRET=your-secret-key-change-in-production
+ACCESS_TOKEN_EXPIRES_IN=1h
+REFRESH_TOKEN_EXPIRES_IN=7d
+REFRESH_TOKEN_SECRET=your-secret-refresh-key-change-in-production
+
+# Logger Configuration
+LOG_LEVEL=debug
+
+# CORS Configuration
+FRONTEND_ORIGIN=http://localhost:3001
+```
+
+#### Опис змінних оточення
+
+- **APP_PORT** - Порт, на якому буде запущений сервер (за замовчуванням: `3000`)
+- **NODE_ENV** - Оточення виконання: `development` або `production` (за замовчуванням: `development`)
+- **DATABASE_PATH** - Шлях до файлу бази даних SQLite (за замовчуванням: `./database.sqlite`)
+- **JWT_SECRET** - Секретний ключ для підпису JWT токенів (обов'язково змініть у продакшені!)
+- **ACCESS_TOKEN_EXPIRES_IN** - Час життя access токену (за замовчуванням: `1h`)
+- **REFRESH_TOKEN_EXPIRES_IN** - Час життя refresh токену (за замовчуванням: `7d`)
+- **REFRESH_TOKEN_SECRET** - Секретний ключ для refresh токенів (обов'язково змініть у продакшені!)
+- **LOG_LEVEL** - Рівень логування: `debug`, `info`, `warn`, `error` (за замовчуванням: `debug` для development, `info` для production)
+- **FRONTEND_ORIGIN** - Дозволені CORS origins (можна вказати кілька через кому, за замовчуванням: `http://localhost:3001`)
+
+### Запуск програми
+
+#### 1. Встановлення залежностей
+
+```bash
+npm install
+```
+
+#### 2. Налаштування змінних оточення
+
+Створіть файл `.env` в корені проєкту та заповніть його змінними оточення (див. вище).
+
+#### 3. Запуск міграцій бази даних
+
+```bash
+npm run migrate
+```
+
+#### 4. Запуск у режимі розробки
+
+```bash
+npm run dev
+```
+
+Сервер буде доступний за адресою `http://localhost:3000` (або інший порт, якщо вказано в `APP_PORT`).
+
+#### 5. Запуск у продакшен режимі
+
+```bash
+# Збірка проєкту
+npm run build
+
+# Запуск сервера
+npm start
+```
+
+### Збірка Docker образу
+
+#### 1. Збірка образу
+
+```bash
+docker build -t movies:latest .
+```
+
+#### 2. Запуск міграцій бази даних (якщо потрібно)
+
+Перед запуском контейнера можна виконати міграції:
+
+```bash
+docker run --rm \
+  --env-file .env \
+  -v $(pwd)/database.sqlite:/app/database.sqlite \
+  movies:latest \
+  npm run migrate
+```
+
+#### 3. Запуск контейнера з використанням змінних оточення
+
+```bash
+docker run -d \
+  --name backend-app \
+  -p 3000:3000 \
+  -e APP_PORT=3000 \
+  -e NODE_ENV=production \
+  -e DATABASE_PATH=/app/database.sqlite \
+  -e JWT_SECRET=your-production-secret-key \
+  -e REFRESH_TOKEN_SECRET=your-production-refresh-secret \
+  -e FRONTEND_ORIGIN=https://your-frontend-domain.com \
+  -v $(pwd)/database.sqlite:/app/database.sqlite \
+  movies:latest
+```
+
+Або використовуйте файл `.env`:
+
+```bash
+docker run -d \
+  --name backend-app \
+  -p 3000:3000 \
+  --env-file .env \
+  -v $(pwd)/database.sqlite:/app/database.sqlite \
+  movies:latest
+```
+
+#### 4. Перевірка роботи контейнера
+
+```bash
+# Перевірка статусу
+docker ps
+
+# Перегляд логів
+docker logs backend-app
+
+# Перевірка health check
+curl http://localhost:3000/health
+```
+
+#### 5. Зупинка контейнера
+
+```bash
+docker stop backend-app
+docker rm backend-app
+```
+
+### Docker Compose (опціонально)
+
+Для зручності можна використовувати Docker Compose. Створіть файл `docker-compose.yml`:
+
+```yaml
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: backend-app
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - APP_PORT=3000
+      - NODE_ENV=production
+      - DATABASE_PATH=/app/database.sqlite
+    volumes:
+      - ./database.sqlite:/app/database.sqlite
+    restart: unless-stopped
+    command: sh -c "npm run migrate && npm start"
+```
+
+Запуск:
+
+```bash
+# Збірка та запуск
+docker-compose up -d
+
+# Перегляд логів
+docker-compose logs -f
+
+# Зупинка
+docker-compose down
+```
+
+**Примітка:** У прикладі вище міграції запускаються автоматично при старті контейнера. Якщо потрібно запускати міграції окремо, видаліть `command` з `docker-compose.yml` та виконайте:
+
+```bash
+docker-compose run --rm backend npm run migrate
+```
 
 ## 📋 What's Included
 
@@ -49,15 +239,17 @@ nvm use
    ```bash
    npm install
    ```
-4. **Set up environment variables**:
+4. **Set up environment variables** - створіть файл `.env` з необхідними змінними (див. розділ "Конфігурація через змінні оточення" вище)
+5. **Run database migrations**:
    ```bash
-   cp .env.example .env
+   npm run migrate
    ```
-   Then edit `.env` with your configuration (SQLite `DATABASE_PATH`, JWT secrets, etc.)
-5. **Start developing**:
+6. **Start developing**:
    ```bash
    npm run dev
    ```
+
+Для детальної інформації про запуск та збірку Docker образу див. розділ "🚀 Запуск програми та збірка Docker образу" вище.
 
 For more detailed information, see [TEMPLATE.md](./TEMPLATE.md).
 
@@ -76,99 +268,8 @@ npm install
 
 > **Note:** If you're using [nvm](https://github.com/nvm-sh/nvm), you can run `nvm use` to automatically switch to the correct Node.js version (specified in `.nvmrc`).
 
-## Configuration
-
-1. Copy `.env.example` to `.env`:
-```bash
-cp .env.example .env
-```
-
-2. Update `.env` with your SQLite database path (`DATABASE_PATH`) and JWT secrets.
-   - You can also configure `ACCESS_TOKEN_EXPIRES_IN`, `REFRESH_TOKEN_EXPIRES_IN`, and `REFRESH_TOKEN_SECRET` for more granular control over token lifetimes.
-
-## Running the Server
-
-### Development mode
-```bash
-npm run dev
-```
-
-### Production mode
-```bash
-npm run build
-npm start
-```
-
-## API Endpoints
-
-### Public Routes
-
-#### Register
-- **POST** `/api/auth/register`
-- Body: `{ "email": "user@example.com", "password": "password123" }`
-- Response:
-  ```json
-  {
-    "success": true,
-    "message": "User registered successfully",
-    "data": {
-      "token": "<access-token>",
-      "accessToken": "<access-token>",
-      "refreshToken": "<refresh-token>",
-      "user": {
-        "id": "...",
-        "email": "user@example.com"
-      }
-    }
-  }
   ```
 
-#### Login
-- **POST** `/api/auth/login`
-- Body: `{ "email": "user@example.com", "password": "password123" }`
-- Response:
-  ```json
-  {
-    "success": true,
-    "message": "Login successful",
-    "data": {
-      "token": "<access-token>",
-      "accessToken": "<access-token>",
-      "refreshToken": "<refresh-token>",
-      "user": {
-        "id": "...",
-        "email": "user@example.com"
-      }
-    }
-  }
-  ```
-
-#### Refresh tokens
-- **POST** `/api/auth/refresh`
-- Body: `{ "refreshToken": "<refresh-token>" }`
-- Response:
-  ```json
-  {
-    "success": true,
-    "message": "Token refreshed successfully",
-    "data": {
-      "token": "<new-access-token>",
-      "accessToken": "<new-access-token>",
-      "refreshToken": "<new-refresh-token>",
-      "user": {
-        "id": "...",
-        "email": "user@example.com"
-      }
-    }
-  }
-  ```
-
-### Protected Routes
-
-#### Get Current User
-- **GET** `/api/auth/me`
-- Headers: `Authorization: Bearer <token>`
-- Response: `{ "success": true, "user": { "id": "...", "email": "..." } }`
 
 ## Commit Convention
 
@@ -223,19 +324,3 @@ Commit messages are automatically validated when you commit. If your commit mess
 - **Pino** - Structured logging
 - **Commitlint** - Commit message validation
 - **Husky** - Git hooks
-
-## 📝 Next Steps After Creating Your Repository
-
-1. Update `package.json` with your project name and description
-2. Configure your environment variables in `.env`
-3. Customize the authentication logic if needed
-4. Add your domain-specific models, services, and routes
-5. Set up your CI/CD pipeline
-6. Configure your production deployment
-
-## 📖 Documentation
-
-- See [TEMPLATE.md](./TEMPLATE.md) for detailed template information
-- See [.github/ISSUE_TEMPLATE](./.github/ISSUE_TEMPLATE/) for issue templates
-- See [.github/PULL_REQUEST_TEMPLATE.md](./.github/PULL_REQUEST_TEMPLATE.md) for PR template
-
