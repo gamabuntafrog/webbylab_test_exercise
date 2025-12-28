@@ -6,6 +6,7 @@ import {
   deleteMovieByIdSchema,
   updateMovieSchema,
   getMovieByIdSchema,
+  listMoviesSchema,
 } from "@validators/movieValidator";
 
 class MovieController {
@@ -81,6 +82,26 @@ class MovieController {
       await this.movieService.deleteMovie(id);
 
       res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * List movies with sorting
+   */
+  public async listMovies(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { sort, order } = mapper.toDTO(req, listMoviesSchema);
+
+      console.log(sort, order);
+      const result = await this.movieService.listMovies(sort, order);
+
+      res.status(200).json(result);
     } catch (error) {
       next(error);
     }

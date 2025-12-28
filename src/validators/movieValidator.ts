@@ -95,3 +95,17 @@ export const updateMovieSchema = z
     message:
       "At least one field (title, year, format, or actors) must be provided",
   });
+
+// Schema for listing movies with sorting
+export const listMoviesSchema = z.object({
+  sort: z
+    .enum(["id", "title", "year"], {
+      invalid_type_error: "sort must be one of: id, title, year",
+    })
+    .default("id"),
+  order: z
+    .enum(["ASC", "DESC"], {
+      invalid_type_error: "order must be either ASC or DESC",
+    })
+    .default("ASC"),
+});

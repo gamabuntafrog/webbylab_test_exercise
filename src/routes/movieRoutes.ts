@@ -6,6 +6,9 @@ export default function createMovieRoutes(
 ): Router {
   const router = Router();
 
+  // List movies with sorting
+  router.get("/", movieController.listMovies.bind(movieController));
+
   // Create a new movie
   router.post("/", movieController.createMovie.bind(movieController));
 

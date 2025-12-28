@@ -33,6 +33,28 @@ class MovieRepository extends BaseRepository<
       ],
     });
   }
+
+  /**
+   * Find all movies with sorting
+   */
+  public async findAllWithSorting(
+    sort: "id" | "title" | "year" = "id",
+    order: "ASC" | "DESC" = "ASC"
+  ): Promise<Movie[]> {
+    const ActorModel = this.getModel("Actor");
+
+    return await this.find({
+      include: [
+        {
+          model: ActorModel,
+          as: "actors",
+          attributes: ["id", "name"],
+          through: { attributes: [] },
+        },
+      ],
+      order: [[sort, order]],
+    });
+  }
 }
 
 export default MovieRepository;

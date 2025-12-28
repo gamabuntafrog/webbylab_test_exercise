@@ -192,6 +192,20 @@ class MovieService {
   public async deleteMovie(id: number): Promise<void> {
     await this.movieRepository.deleteById(id);
   }
+
+  /**
+   * List movies with sorting
+   */
+  public async listMovies(
+    sort: "id" | "title" | "year" = "id",
+    order: "ASC" | "DESC" = "ASC"
+  ): Promise<MovieResponse[]> {
+    const movies = await this.movieRepository.findAllWithSorting(sort, order);
+
+    console.log(sort, order);
+
+    return movies.map((movie) => this.toResponse(movie));
+  }
 }
 
 export default MovieService;
