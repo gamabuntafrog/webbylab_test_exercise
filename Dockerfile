@@ -2,6 +2,13 @@
 FROM node:22-slim AS base
 WORKDIR /usr/src/app
 
+# Install build dependencies for native modules (better-sqlite3)
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy package files
 COPY package.json package-lock.json ./
 
@@ -30,14 +37,30 @@ ENV NODE_ENV=production \
     CI=true \
     HUSKY=0
 
+# Install build dependencies for native modules (better-sqlite3)
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy package files
 COPY package.json package-lock.json ./
 
-# Install only production dependencies
-RUN npm ci --omit=dev && npm cache clean --force
+# Install production dependencies + tsx and typescript for migrations
+RUN npm ci --omit=dev && \
+    npm install --save-prod tsx typescript && \
+    npm cache clean --force
 
-# Copy compiled code from build stage
+# Remove build dependencies to keep image small (native modules are already compiled)
+RUN apt-get update && apt-get remove -y python3 make g++ && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
+
+# Copy compiled code from build stage (for server)
 COPY --from=build /usr/src/app/dist ./dist
+
+# Copy source code and tsconfig (for migrations with tsx)
+COPY --from=build /usr/src/app/src ./src
+COPY --from=build /usr/src/app/tsconfig.json ./tsconfig.json
 
 # Expose port
 EXPOSE 3000
