@@ -10,6 +10,7 @@ import {
 import { withTransaction } from "@db/utilities/transaction";
 import { NotFoundError } from "@errors/AppError";
 import { ERROR_CODES } from "@constants/errorCodes";
+import { processInBatches } from "@helpers/batchHelper";
 
 export interface CreateMovieData {
   title: string;
@@ -232,9 +233,10 @@ class MovieService {
   }
 
   /**
-   * Import multiple movies from parsed data
+   * Import multiple movies from parsed data with batching
    * Creates movies that are valid and returns errors for invalid ones
    * Uses internal _createMovie method directly to avoid business logic overhead
+   * Processes movies in batches for better performance
    */
   public async importMovies(
     movies: Array<{
@@ -242,29 +244,24 @@ class MovieService {
       year: number;
       format: MovieFormat;
       actors: string[];
-    }>
+    }>,
+    batchSize: number = 50
   ): Promise<{
     created: MovieResponse[];
     errors: Array<{ index: number; error: string }>;
   }> {
-    const created: MovieResponse[] = [];
-    const errors: Array<{ index: number; error: string }> = [];
+    const { results, errors } = await processInBatches({
+      items: movies,
+      batchSize,
+      processor: async (movie) => {
+        return await this._createMovie(movie);
+      },
+    });
 
-    // Process each movie individually to allow partial success
-    for (let i = 0; i < movies.length; i++) {
-      try {
-        const movie = await this._createMovie(movies[i]);
-
-        created.push(movie);
-      } catch (error) {
-        errors.push({
-          index: i + 1,
-          error: error instanceof Error ? error.message : String(error),
-        });
-      }
-    }
-
-    return { created, errors };
+    return {
+      created: results,
+      errors,
+    };
   }
 }
 
