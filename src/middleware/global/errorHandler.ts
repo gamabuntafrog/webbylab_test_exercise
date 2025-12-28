@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { AppError } from "@errors/AppError";
 import config from "@config";
 import logger from "@utilities/logger";
-import { ERROR_CODES } from "@constants/errorCodes";
+import { ERROR_CODES, ErrorCode } from "@constants/errorCodes";
 import multer from "multer";
 
 export function errorHandler(
@@ -35,9 +35,9 @@ export function errorHandler(
 
   // Handle Multer errors first (before logging)
   if (err instanceof multer.MulterError) {
-    let errorCode = ERROR_CODES.FILE_UPLOAD_ERROR;
+    let errorCode: ErrorCode = ERROR_CODES.FILE_UPLOAD_ERROR;
     let message = "File upload error";
-    let statusCode = 400;
+    const statusCode = 400;
 
     switch (err.code) {
       case "LIMIT_FILE_SIZE":
@@ -98,40 +98,6 @@ export function errorHandler(
     }
   } else {
     logger.error(errorContext, "Unexpected error occurred");
-  }
-
-  // Handle file filter errors (from multer fileFilter)
-  if (err.message && err.message.includes("Only text files")) {
-    // Log file filter errors as warnings
-    logger.warn(
-      {
-        ...errorContext,
-        error: {
-          ...errorContext.error,
-          code: ERROR_CODES.INVALID_FILE_TYPE,
-          statusCode: 400,
-        },
-      },
-      `FileFilterError [${ERROR_CODES.INVALID_FILE_TYPE}]: ${err.message}`
-    );
-
-    const errorResponse = {
-      status: 0,
-      error: {
-        code: ERROR_CODES.INVALID_FILE_TYPE,
-      },
-      ...(config.isDevelopment() && {
-        meta: {
-          message: err.message,
-          timestamp: new Date().toISOString(),
-          path: req.url,
-          method: req.method,
-        },
-      }),
-    };
-
-    res.status(400).json(errorResponse);
-    return;
   }
 
   // Handle AppError instances
