@@ -1,7 +1,5 @@
 # Movies
 
-
-
 ## 🚀 Запуск програми та збірка Docker образу
 
 ### Вимоги
@@ -150,50 +148,6 @@ docker stop backend-app
 docker rm backend-app
 ```
 
-### Docker Compose (опціонально)
-
-Для зручності можна використовувати Docker Compose. Створіть файл `docker-compose.yml`:
-
-```yaml
-version: '3.8'
-
-services:
-  backend:
-    build: .
-    container_name: backend-app
-    ports:
-      - "3000:3000"
-    env_file:
-      - .env
-    environment:
-      - APP_PORT=3000
-      - NODE_ENV=production
-      - DATABASE_PATH=/app/database.sqlite
-    volumes:
-      - ./database.sqlite:/app/database.sqlite
-    restart: unless-stopped
-    command: sh -c "npm run migrate && npm start"
-```
-
-Запуск:
-
-```bash
-# Збірка та запуск
-docker-compose up -d
-
-# Перегляд логів
-docker-compose logs -f
-
-# Зупинка
-docker-compose down
-```
-
-**Примітка:** У прикладі вище міграції запускаються автоматично при старті контейнера. Якщо потрібно запускати міграції окремо, видаліть `command` з `docker-compose.yml` та виконайте:
-
-```bash
-docker-compose run --rm backend npm run migrate
-```
-
 ### Робота з міграціями в Docker
 
 #### Запуск міграцій в запущеному контейнері
@@ -250,12 +204,14 @@ docker exec backend-app npm run migrate:rollback
 - **npm 10.x** or higher
 
 You can use [nvm](https://github.com/nvm-sh/nvm) to manage Node.js versions:
+
 ```bash
 nvm install 22
 nvm use 22
 ```
 
 Or if you have `.nvmrc` file, simply run:
+
 ```bash
 nvm use
 ```
@@ -301,7 +257,7 @@ npm install
 
 > **Note:** If you're using [nvm](https://github.com/nvm-sh/nvm), you can run `nvm use` to automatically switch to the correct Node.js version (specified in `.nvmrc`).
 
-  ```
+```
 
 
 ## Commit Convention
@@ -311,6 +267,7 @@ This project uses [Conventional Commits](https://www.conventionalcommits.org/) t
 ### Commit Message Format
 
 ```
+
 <type>(<scope>): <subject>
 
 <body>
