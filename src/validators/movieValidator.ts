@@ -108,4 +108,18 @@ export const listMoviesSchema = z.object({
       invalid_type_error: "order must be either ASC or DESC",
     })
     .default("ASC"),
+  limit: z.coerce
+    .number({
+      invalid_type_error: "limit must be a number",
+    })
+    .int("limit must be an integer")
+    .positive("limit must be positive")
+    .default(20),
+  offset: z.coerce
+    .number({
+      invalid_type_error: "offset must be a number",
+    })
+    .int("offset must be an integer")
+    .min(0, "offset must be non-negative")
+    .default(0),
 });

@@ -6,6 +6,7 @@ import {
 } from "@db/models/Movie";
 import { BaseRepository } from "./BaseRepository";
 import { Models } from "@db/associations";
+import { FindOptions, InferAttributes } from "sequelize";
 
 class MovieRepository extends BaseRepository<
   Movie,
@@ -35,15 +36,17 @@ class MovieRepository extends BaseRepository<
   }
 
   /**
-   * Find all movies with sorting
+   * Find all movies with sorting, limit, and offset
    */
   public async findAllWithSorting(
     sort: "id" | "title" | "year" = "id",
-    order: "ASC" | "DESC" = "ASC"
+    order: "ASC" | "DESC" = "ASC",
+    limit: number = 20,
+    offset: number = 0
   ): Promise<Movie[]> {
     const ActorModel = this.getModel("Actor");
 
-    return await this.find({
+    const findOptions: FindOptions<InferAttributes<Movie>> = {
       include: [
         {
           model: ActorModel,
@@ -53,7 +56,11 @@ class MovieRepository extends BaseRepository<
         },
       ],
       order: [[sort, order]],
-    });
+      limit,
+      offset,
+    };
+
+    return await this.find(findOptions);
   }
 }
 

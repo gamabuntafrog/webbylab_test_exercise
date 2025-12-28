@@ -88,7 +88,7 @@ class MovieController {
   }
 
   /**
-   * List movies with sorting
+   * List movies with sorting, limit, and offset
    */
   public async listMovies(
     req: Request,
@@ -96,10 +96,18 @@ class MovieController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { sort, order } = mapper.toDTO(req, listMoviesSchema);
+      const { sort, order, limit, offset } = mapper.toDTO(
+        req,
+        listMoviesSchema
+      );
 
       console.log(sort, order);
-      const result = await this.movieService.listMovies(sort, order);
+      const result = await this.movieService.listMovies(
+        sort,
+        order,
+        limit,
+        offset
+      );
 
       res.status(200).json(result);
     } catch (error) {
