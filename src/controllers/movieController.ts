@@ -96,12 +96,9 @@ class MovieController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { sort, order, limit, offset } = mapper.toDTO(
-        req,
-        listMoviesSchema
-      );
+      const validatedData = mapper.toDTO(req, listMoviesSchema);
+      const { sort, order, limit, offset } = validatedData;
 
-      console.log(sort, order);
       const result = await this.movieService.listMovies(
         sort,
         order,

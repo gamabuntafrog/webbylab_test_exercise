@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { MovieFormat } from "@db/models/Movie";
+import { paginationAndSortingSchema } from "@validators/shared";
 
 // Schema for creating a movie
 export const createMovieSchema = z.object({
@@ -96,8 +97,10 @@ export const updateMovieSchema = z
       "At least one field (title, year, format, or actors) must be provided",
   });
 
-// Schema for listing movies with sorting
-export const listMoviesSchema = z.object({
+/**
+ * Sorting schema with sort field and order
+ */
+export const movieSortingSchema = z.object({
   sort: z
     .enum(["id", "title", "year"], {
       invalid_type_error: "sort must be one of: id, title, year",
@@ -108,18 +111,7 @@ export const listMoviesSchema = z.object({
       invalid_type_error: "order must be either ASC or DESC",
     })
     .default("ASC"),
-  limit: z.coerce
-    .number({
-      invalid_type_error: "limit must be a number",
-    })
-    .int("limit must be an integer")
-    .positive("limit must be positive")
-    .default(20),
-  offset: z.coerce
-    .number({
-      invalid_type_error: "offset must be a number",
-    })
-    .int("offset must be an integer")
-    .min(0, "offset must be non-negative")
-    .default(0),
 });
+
+// Schema for listing movies with sorting
+export const listMoviesSchema = paginationAndSortingSchema(movieSortingSchema);
