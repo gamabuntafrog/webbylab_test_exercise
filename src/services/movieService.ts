@@ -85,9 +85,10 @@ class MovieService {
   }
 
   /**
-   * Create a new movie with actors
+   * Internal method to create a movie with actors
+   * Encapsulates the core business logic for movie creation
    */
-  public async createMovie(data: CreateMovieData): Promise<MovieResponse> {
+  private async _createMovie(data: CreateMovieData): Promise<MovieResponse> {
     const movieData: CreateMovieInput = {
       title: data.title.trim(),
       year: data.year,
@@ -125,8 +126,15 @@ class MovieService {
       } as Movie;
     });
 
-    // Return movie with actors using the new method
     return this.toResponse(movie);
+  }
+
+  /**
+   * Create a new movie with actors (public API)
+   * Handles business logic for single movie creation requests
+   */
+  public async createMovie(data: CreateMovieData): Promise<MovieResponse> {
+    return await this._createMovie(data);
   }
 
   /**
@@ -221,6 +229,42 @@ class MovieService {
       movies: movieResponses,
       total,
     };
+  }
+
+  /**
+   * Import multiple movies from parsed data
+   * Creates movies that are valid and returns errors for invalid ones
+   * Uses internal _createMovie method directly to avoid business logic overhead
+   */
+  public async importMovies(
+    movies: Array<{
+      title: string;
+      year: number;
+      format: MovieFormat;
+      actors: string[];
+    }>
+  ): Promise<{
+    created: MovieResponse[];
+    errors: Array<{ index: number; error: string }>;
+  }> {
+    const created: MovieResponse[] = [];
+    const errors: Array<{ index: number; error: string }> = [];
+
+    // Process each movie individually to allow partial success
+    for (let i = 0; i < movies.length; i++) {
+      try {
+        const movie = await this._createMovie(movies[i]);
+
+        created.push(movie);
+      } catch (error) {
+        errors.push({
+          index: i + 1,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
+
+    return { created, errors };
   }
 }
 
