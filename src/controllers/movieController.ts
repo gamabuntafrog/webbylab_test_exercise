@@ -150,21 +150,26 @@ class MovieController {
         parseResult.movies
       );
 
-      // Format parsing errors to match import error structure
-      const parsingErrors = parseResult.errors.map((error, index) => ({
-        index: index + 1,
-        error,
-      }));
-
       // Combine parsing errors with import errors
-      const allErrors = [...parsingErrors, ...importResult.errors];
+      const allErrors = [...parseResult.errors, ...importResult.errors];
+
+      // Calculate totals
+      const total = parseResult.movies.length + parseResult.errors.length;
+      const imported = importResult.created.length;
+      const errorsCount = allErrors.length;
+
+      // Status: 1 if at least some movies were imported, 0 if all failed
+      const status = imported > 0 ? 1 : 0;
 
       // Return result
       res.status(200).json({
-        success: true,
-        created: importResult.created.length,
-        errors: allErrors.length > 0 ? allErrors : undefined,
-        movies: importResult.created,
+        data: importResult.created,
+        meta: {
+          imported,
+          total,
+          errors: errorsCount > 0 ? allErrors : undefined,
+        },
+        status,
       });
     } catch (error) {
       next(error);
