@@ -10,7 +10,6 @@ import {
 import { withTransaction } from "@db/utilities/transaction";
 import { NotFoundError } from "@errors/AppError";
 import { ERROR_CODES } from "@constants/errorCodes";
-import requestHelper, { PaginatedResponse } from "@helpers/requestHelper";
 
 export interface CreateMovieData {
   title: string;
@@ -202,7 +201,7 @@ class MovieService {
     order: "ASC" | "DESC" = "ASC",
     limit: number = 20,
     offset: number = 0
-  ): Promise<PaginatedResponse<MovieResponse>> {
+  ): Promise<{ movies: MovieResponse[]; total: number }> {
     const { movies, total } = await this.movieRepository.findAllWithSorting(
       sort,
       order,
@@ -212,12 +211,10 @@ class MovieService {
 
     const movieResponses = movies.map((movie) => this.toResponse(movie));
 
-    return requestHelper.formatPaginatedResponse(
-      movieResponses,
-      limit,
-      offset,
-      total
-    );
+    return {
+      movies: movieResponses,
+      total,
+    };
   }
 }
 

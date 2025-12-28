@@ -8,6 +8,8 @@ import {
   getMovieByIdSchema,
   listMoviesSchema,
 } from "@validators/movieValidator";
+import requestHelper from "@helpers/requestHelper";
+import { z } from "zod";
 
 class MovieController {
   constructor(private readonly movieService: MovieService) {}
@@ -96,14 +98,23 @@ class MovieController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const validatedData = mapper.toDTO(req, listMoviesSchema);
+      const validatedData = mapper.toDTO(req, listMoviesSchema) as z.infer<
+        typeof listMoviesSchema
+      >;
       const { sort, order, limit, offset } = validatedData;
 
-      const result = await this.movieService.listMovies(
+      const { movies, total } = await this.movieService.listMovies(
         sort,
         order,
         limit,
         offset
+      );
+
+      const result = requestHelper.formatPaginatedResponse(
+        movies,
+        limit,
+        offset,
+        total
       );
 
       res.status(200).json(result);
