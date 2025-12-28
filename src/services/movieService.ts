@@ -194,19 +194,25 @@ class MovieService {
   }
 
   /**
-   * List movies with sorting, limit, and offset
+   * List movies with sorting, limit, offset, and filtering
    */
   public async listMovies(
     sort: "id" | "title" | "year" = "id",
     order: "ASC" | "DESC" = "ASC",
     limit: number = 20,
-    offset: number = 0
+    offset: number = 0,
+    filters: {
+      actor?: string;
+      title?: string;
+      search?: string;
+    }
   ): Promise<{ movies: MovieResponse[]; total: number }> {
     const { movies, total } = await this.movieRepository.findAllWithSorting(
       sort,
       order,
       limit,
-      offset
+      offset,
+      filters
     );
 
     const movieResponses = movies.map((movie) => this.toResponse(movie));

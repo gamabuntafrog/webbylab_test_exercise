@@ -90,7 +90,7 @@ class MovieController {
   }
 
   /**
-   * List movies with sorting, limit, and offset
+   * List movies with sorting, limit, offset, and filtering
    */
   public async listMovies(
     req: Request,
@@ -101,13 +101,21 @@ class MovieController {
       const validatedData = mapper.toDTO(req, listMoviesSchema) as z.infer<
         typeof listMoviesSchema
       >;
-      const { sort, order, limit, offset } = validatedData;
+      const { sort, order, limit, offset, actor, title, search } =
+        validatedData;
+
+      const filters = {
+        actor,
+        title,
+        search,
+      };
 
       const { movies, total } = await this.movieService.listMovies(
         sort,
         order,
         limit,
-        offset
+        offset,
+        filters
       );
 
       const result = requestHelper.formatPaginatedResponse(

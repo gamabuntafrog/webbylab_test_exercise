@@ -113,5 +113,31 @@ export const movieSortingSchema = z.object({
     .default("ASC"),
 });
 
-// Schema for listing movies with sorting
-export const listMoviesSchema = paginationAndSortingSchema(movieSortingSchema);
+/**
+ * Filter schema for movies
+ */
+export const movieFilterSchema = z.object({
+  actor: z
+    .string({
+      invalid_type_error: "actor must be a string",
+    })
+    .min(1, "actor filter cannot be empty")
+    .optional(),
+  title: z
+    .string({
+      invalid_type_error: "title must be a string",
+    })
+    .min(1, "title filter cannot be empty")
+    .optional(),
+  search: z
+    .string({
+      invalid_type_error: "search must be a string",
+    })
+    .min(1, "search filter cannot be empty")
+    .optional(),
+});
+
+// Schema for listing movies with sorting and filtering
+export const listMoviesSchema = paginationAndSortingSchema(
+  movieSortingSchema.merge(movieFilterSchema)
+);
