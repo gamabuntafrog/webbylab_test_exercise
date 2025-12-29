@@ -34,6 +34,10 @@ export const createMovieSchema = z.object({
         .trim()
         .min(1, "Actor name cannot be empty")
         .max(255, "Actor name must be at most 255 characters")
+        .regex(
+          /^[a-zA-Z\s\-.]+$/,
+          "Actor name can only contain letters, spaces, hyphens, and periods"
+        )
     )
     .min(1, "At least one actor is required"),
 });
@@ -90,6 +94,10 @@ export const updateMovieSchema = z
           .trim()
           .min(1, "Actor name cannot be empty")
           .max(255, "Actor name must be at most 255 characters")
+          .regex(
+            /^[a-zA-Z\s\-,.]+$/,
+            "Actor name can only contain letters, spaces, hyphens, commas, and periods"
+          )
       )
       .optional(),
   })
