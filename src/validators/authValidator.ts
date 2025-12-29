@@ -8,6 +8,7 @@ export const registerSchema = z
         required_error: "Email is required",
         invalid_type_error: "Email must be a string",
       })
+      .trim()
       .email("Please provide a valid email address"),
     password: z
       .string({
@@ -41,6 +42,7 @@ export const loginSchema = z.object({
       required_error: "Email is required",
       invalid_type_error: "Email must be a string",
     })
+    .trim()
     .email("Please provide a valid email address"),
   password: z
     .string({
