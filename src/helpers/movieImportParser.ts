@@ -47,9 +47,9 @@ const movieBlockSchema = z.object({
       required_error: "Title is required",
       invalid_type_error: "Title must be a string",
     })
+    .trim()
     .min(1, "Title cannot be empty")
-    .max(255, "Title must be at most 255 characters")
-    .trim(),
+    .max(255, "Title must be at most 255 characters"),
   year: z.coerce
     .number({
       required_error: "Release Year is required",
@@ -78,9 +78,9 @@ const movieBlockSchema = z.object({
           required_error: "Actor name is required",
           invalid_type_error: "Actor name must be a string",
         })
+        .trim()
         .min(1, "Actor name cannot be empty")
         .max(255, "Actor name must be at most 255 characters")
-        .trim()
     )
     .min(1, "At least one actor is required"),
 });

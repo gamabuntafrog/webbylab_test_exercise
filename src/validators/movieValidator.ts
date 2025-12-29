@@ -9,6 +9,7 @@ export const createMovieSchema = z.object({
       required_error: "Title is required",
       invalid_type_error: "Title must be a string",
     })
+    .trim()
     .min(1, "Title cannot be empty")
     .max(255, "Title must be at most 255 characters"),
   year: z
@@ -30,6 +31,7 @@ export const createMovieSchema = z.object({
           required_error: "Actor name is required",
           invalid_type_error: "Actor name must be a string",
         })
+        .trim()
         .min(1, "Actor name cannot be empty")
         .max(255, "Actor name must be at most 255 characters")
     )
@@ -62,6 +64,7 @@ export const updateMovieSchema = z
       .string({
         invalid_type_error: "Title must be a string",
       })
+      .trim()
       .min(1, "Title cannot be empty")
       .max(255, "Title must be at most 255 characters")
       .optional(),
@@ -87,6 +90,7 @@ export const updateMovieSchema = z
           .string({
             invalid_type_error: "Actor name must be a string",
           })
+          .trim()
           .min(1, "Actor name cannot be empty")
           .max(255, "Actor name must be at most 255 characters")
       )

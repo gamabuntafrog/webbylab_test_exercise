@@ -14,12 +14,14 @@ export const registerSchema = z
         required_error: "Password is required",
         invalid_type_error: "Password must be a string",
       })
+      .trim()
       .min(6, "Password must be at least 6 characters long"),
     confirmPassword: z
       .string({
         required_error: "Confirm password is required",
         invalid_type_error: "Confirm password must be a string",
       })
+      .trim()
       .min(6, "Confirm password must be at least 6 characters long"),
   })
   .superRefine((data, ctx) => {
@@ -40,10 +42,12 @@ export const loginSchema = z.object({
       invalid_type_error: "Email must be a string",
     })
     .email("Please provide a valid email address"),
-  password: z.string({
-    required_error: "Password is required",
-    invalid_type_error: "Password must be a string",
-  }),
+  password: z
+    .string({
+      required_error: "Password is required",
+      invalid_type_error: "Password must be a string",
+    })
+    .trim(),
 });
 
 export const refreshSchema = z.object({
