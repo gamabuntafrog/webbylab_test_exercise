@@ -57,7 +57,7 @@ const movieBlockSchema = z.object({
     })
     .int("Release Year must be an integer")
     .min(1888, "Year must be at least 1888")
-    .max(new Date().getFullYear() + 10, "Year cannot be too far in the future"),
+    .max(new Date().getFullYear(), "Year cannot be too far in the future"),
   format: z
     .string({
       required_error: "Format is required",

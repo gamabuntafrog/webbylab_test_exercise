@@ -47,7 +47,7 @@ export function initializeMovieModel(sequelize: Sequelize): ModelStatic<Movie> {
         allowNull: false,
         validate: {
           min: 1888, // First movie ever made
-          max: new Date().getFullYear() + 10, // Allow some future releases
+          max: new Date().getFullYear(),
         },
       },
       format: {

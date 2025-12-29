@@ -19,7 +19,7 @@ export const createMovieSchema = z.object({
     })
     .int("Year must be an integer")
     .min(1888, "Year must be at least 1888")
-    .max(new Date().getFullYear() + 10, "Year cannot be too far in the future"),
+    .max(new Date().getFullYear(), "Year cannot be too far in the future"),
   format: z.nativeEnum(MovieFormat, {
     required_error: "Format is required",
     invalid_type_error: `Format must be one of: ${Object.values(MovieFormat).join(", ")}`,
@@ -74,10 +74,7 @@ export const updateMovieSchema = z
       })
       .int("Year must be an integer")
       .min(1888, "Year must be at least 1888")
-      .max(
-        new Date().getFullYear() + 10,
-        "Year cannot be too far in the future"
-      )
+      .max(new Date().getFullYear(), "Year cannot be too far in the future")
       .optional(),
     format: z
       .nativeEnum(MovieFormat, {
